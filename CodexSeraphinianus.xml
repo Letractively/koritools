@@ -8,10 +8,10 @@
     <Meta name="thumbnail">http://gmodules.com/ig/images/skins/ig_thumb_beach.jpg</Meta>
   </ConfigMap> 
   <ConfigMap type="Skin"> 
-    <Attribute name="header.background_color">teal</Attribute>
-    <Attribute name="header.logo">white</Attribute> 
+    <Attribute name="header.background_color">white</Attribute>
+	<Attribute name="header.center_image.url">http://koritools.googlecode.com/svn/trunk/header_01.png</Attribute>
+    <Attribute name="header.logo">original</Attribute> 
     <Attribute name="header.link_color">blue</Attribute> 
     <Attribute name="header.text_color">black</Attribute> 
-    <Attribute name="gadget_area.gadget.header.background_color">teal</Attribute>
   </ConfigMap> 
 </ConfigMaps>
