@@ -1,4 +1,4 @@
-<?php
+п»ї<?php
     
 require("MailRu_RssFetcher.php");
 require("SimpleTweet.php");
@@ -16,8 +16,8 @@ if( !$RssFetcher->GetNewItems($NewRssItems) )
 }
 
 $MaxCountOfTries = 2;
-$TweetDelay = 1; // Секунд
-$TweetDelayOnError = 5; //Секунд
+$TweetDelay = 1; // РЎРµРєСѓРЅРґ
+$TweetDelayOnError = 5; //РЎРµРєСѓРЅРґ
 $MaxTweetLen = 140; // Magic Twitter Number
 
 if( count($NewRssItems)> 0)
@@ -27,10 +27,10 @@ if( count($NewRssItems)> 0)
     {
         $Message = $NewRssItems[$i][$c_DescriptionTagName];
 
-        $Message = preg_replace("#<a href=\"(.+)\".*>.*</a>#Ui", "$1", $Message); // Делаем из html-ссылок plain text
-        //TODO: От остальных html тегов текст тоже надо чистить, т.к. иногда они все же просачиваются
-        //$Message = iconv("windows-1251", "utf-8", $Message); //FIXME: Mail.ru всегда возвращает RSS в кодировке windows-1251 
-        // После preg_replace кодировка волшебным образом меняется на utf-8
+        $Message = preg_replace("#<a href=\"(.+)\".*>.*</a>#Ui", "$1", $Message); // Р”РµР»Р°РµРј РёР· html-СЃСЃС‹Р»РѕРє plain text
+        //TODO: РћС‚ РѕСЃС‚Р°Р»СЊРЅС‹С… html С‚РµРіРѕРІ С‚РµРєСЃС‚ С‚РѕР¶Рµ РЅР°РґРѕ С‡РёСЃС‚РёС‚СЊ, С‚.Рє. РёРЅРѕРіРґР° РѕРЅРё РІСЃРµ Р¶Рµ РїСЂРѕСЃР°С‡РёРІР°СЋС‚СЃСЏ
+        //$Message = iconv("windows-1251", "utf-8", $Message); //FIXME: Mail.ru РІСЃРµРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚ RSS РІ РєРѕРґРёСЂРѕРІРєРµ windows-1251 
+        // РџРѕСЃР»Рµ preg_replace РєРѕРґРёСЂРѕРІРєР° РІРѕР»С€РµР±РЅС‹Рј РѕР±СЂР°Р·РѕРј РјРµРЅСЏРµС‚СЃСЏ РЅР° utf-8
         if(mb_strlen($Message, "utf-8") > $MaxTweetLen ) 
         {
             $Message = mb_substr($Message, 0, $MaxTweetLen-1, "utf-8");
