@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
 	}
 
 	//typedef std::vector<CGeographicalObject> OfficeList_t;
-	CCompany::OfficeList_t OffiecList;
+	CCompany::OfficeList_t OfficeList;
 
 	Company.GetOfficeList(OfficeList);
 
