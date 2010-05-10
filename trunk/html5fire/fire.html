@@ -1,0 +1,304 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+<script type="text/javascript"> 
+
+var ctx
+var fireImage
+var firePixels
+
+var iCanvasWidth
+var iCanvasHeight
+
+const COLORS_IN_PALETTE = 255
+var palette = new Array(COLORS_IN_PALETTE);
+
+var flameArray
+var flameScreen
+
+function createPalette()
+{
+	function hsi2rgb(h,s,i)
+	{
+		var r = 1 + s * Math.sin(h - 2*Math.PI/3);
+		var g = 1 + s * Math.sin(h);
+		var b = 1 + s * Math.sin(h + 2*Math.PI/3);
+		var t = 63.999 * i/2.0;
+		var rgbColor = [Math.floor(r*t), Math.floor(g*t), Math.floor(b*t)];
+		return rgbColor;
+	}
+	function clearPalette()
+	{
+		for(var i=0; i<=palette.lenght; i++)
+		{
+			palette[i] = [0,0,0];
+		}
+	}
+	
+	const MAX_COLOR = 125.0
+	
+	clearPalette();
+	var i
+	for(i=0; i<MAX_COLOR; i++)
+	{
+		palette[i] = hsi2rgb(4.6 - 1.5*i/MAX_COLOR, i/MAX_COLOR, i/MAX_COLOR);
+	}
+	for(i=MAX_COLOR; i<=COLORS_IN_PALETTE; i++)
+	{
+		palette[i] = new Array(palette[i-1][0], palette[i-1][1], palette[i-1][2]);
+		if(palette[i][0] < 63)
+				palette[i][0]++;
+		if(palette[i][0] < 63)
+				palette[i][0]++;
+		if( (i % 2 == 0) && (palette[i][1] < 53) )
+				palette[i][1]++;
+		if( (i % 2 == 0) && (palette[i][2] < 63) )
+				palette[i][2]++;
+	}
+	for(i=0; i<=COLORS_IN_PALETTE; i++)
+	{
+		palette[i][0] *= 4;
+		palette[i][1] *= 4;
+		palette[i][2] *= 4;
+		if( i < 60 )
+		{
+			palette[i][1] = palette[i][0];
+			palette[i][2] = palette[i][0];
+		}
+	}
+}
+
+/**
+*Returns a random integer in the [0, range) interval.
+*
+*@param range 
+*/
+function Rand(range)
+{
+	return Math.floor(Math.random()*range);
+}
+
+/**
+*Return a random integer in the [-range, range] interval.
+*
+*@param range
+*/
+function rangeRand(range)
+{
+	return Rand(2*range + 1) - range;
+}
+
+function addFlames(count, intensity)
+{
+	var startPoint = Rand(iCanvasWidth-count);
+	for(var i=startPoint; i<=startPoint+count; i++)
+	{
+		flameArray[i] = intensity;
+	}
+}
+
+function createFlameArray()
+{
+	flameArray = new Array(iCanvasWidth);
+	for(var i=0; i<flameArray.length; i++)
+	{
+		flameArray[i] = 0;
+	}
+	addFlames(5, 15);
+}
+
+function createFlameScreen()
+{
+	flameScreen = new Array(iCanvasWidth);
+	for(var i=0; i<flameScreen.length; i++)
+	{
+		flameScreen[i] = new Array(iCanvasHeight);
+		for(var j=0; j<flameScreen[i].length; j++)
+		{
+			flameScreen[i][j] = 0;
+		}
+	}
+}
+
+function initFire()
+{
+	var canvas = document.getElementById("fireCanvas");
+	iCanvasWidth = canvas.width
+	iCanvasHeight = canvas.height
+	ctx = canvas.getContext("2d");
+	fireImage = ctx.getImageData(0, 0, iCanvasWidth, iCanvasHeight);
+	firePixels = fireImage.data;
+	createPalette();
+	createFlameArray();
+	createFlameScreen();
+}
+
+function drawFlamePixel(x,y, color)
+{
+	var iOffset = 4*(y * iCanvasWidth + x);
+    firePixels[iOffset    ] = color[0];   // r
+    firePixels[iOffset + 1] = color[1];   // g
+    firePixels[iOffset + 2] = color[2];   // b
+    firePixels[iOffset + 3] = 255;
+}
+
+var frameCounter = 0;
+
+function updateFramesCounter()
+{
+	if( frameCounter > 7000)
+	{
+		frameCounter = 0;
+	}
+	else
+	{
+		frameCounter++;
+	}
+}
+
+function burnLoop()
+{
+	const DECAY = 3;
+	const MIN_FIRE = 40;
+	const FIRE_INCREASE = 255;
+	const ROOT_RAND = 40;
+	const SMOOTH = 1;
+	var i,j
+	// Put the values from FlameArray on the bottom line of the screen 
+	for(i=0; i<iCanvasWidth; i++)
+	{
+		flameScreen[i][iCanvasHeight-1] = flameArray[i];
+	}
+	var v
+	//This loop makes the actual flames
+	for(i=1; i<iCanvasWidth; i++)
+	{
+		for(j=1; j<iCanvasHeight; j++)
+		{
+			v = flameScreen[i][j];
+			if( (v == 0) ||
+				(v < DECAY) ||
+				(i <= 1) ||
+				(i >= iCanvasWidth-1) )// Looks creepy, eh?
+			{
+				flameScreen[i][j-1] = 0; // AV?
+			}
+			else
+			{
+				flameScreen[i-Rand(3)+1][j-1] = v - Rand(DECAY);
+			}
+		}
+	}
+	// Add some gasoline? ;-)
+	if( Rand(150) == 0)
+	{
+		addFlames(5, 255)
+	}
+	// Add water
+	if( (frameCounter > 1000) && (frameCounter < 1500) )
+	{
+		for(i=0; i<10; i++)
+		{
+			addFlames(1,0);
+		}
+	}
+	var x
+	//This loop controls the "root" of the  flames ie. the values in FlameArray
+	for(i=0; i<iCanvasWidth; i++)
+	{
+		x = flameArray[i];
+		if( x < MIN_FIRE) // Increase by the "burnability"
+		{
+			if( x > 10)
+			{
+				x += Rand(FIRE_INCREASE);
+			}
+		}
+		else // Otherwise randomize and increase by intensity (is burning)
+		{
+			x += rangeRand(ROOT_RAND) + 1;
+		}
+		if( x > 254)
+		{
+			x = 254;
+		}
+		flameArray[i] = x;
+	}
+	//Smoothen the values of FrameArray to avoid "descrete" flames
+	for(i=SMOOTH; i<iCanvasWidth-SMOOTH; i++)
+	{
+		x = 0;
+		for(j=-1*SMOOTH; j<=SMOOTH; j++)
+		{
+			x += flameArray[i+j];
+		}
+		flameArray[i] = Math.floor( x / (2*SMOOTH + 1) );
+	}
+	// Draw pixel
+	for(i=0; i<iCanvasWidth; i++)
+	{
+		for(j=0; j<iCanvasHeight; j++)
+		{
+			drawFlamePixel(i,j, palette[ flameScreen[i][j] ]);
+		}
+	}
+	// Put image on screen
+	ctx.putImageData(fireImage, 0, 0);
+	
+	updateFramesCounter();
+	//setTimeout("burnLoop();",0);
+}
+
+function killWithFire()
+{
+	initFire();
+	//while(true)
+	setInterval("burnLoop();",0);
+}
+
+
+function testJS()
+{
+	var d2a = new Array(10,10);
+	for(var i=0; i<d2a.length; i++)
+	{
+		//alert(d2a[i]);
+	}
+	return
+}
+
+</script>
+
+<style type="text/css"> 
+html,body,table,td{padding:0;margin:0; background-color: black;}
+html,body,table{width:100%;height:100%}
+div{background:#FFF;position:relative; margin:0 auto;border:#BBB solid 1px}
+</style> 
+
+</head>
+
+<body onload="killWithFire();">
+<table cellspacing=0>
+
+<tr>
+
+<td> 
+ 
+	<div style="width:300px; height:300px;" > 
+ 
+	<canvas id = "fireCanvas" width="300" height="300">
+	You borwser is too retarded and doesn't support html5.
+	</canvas>
+	</div> 
+ 
+</td>
+
+</tr>
+</table> 
+
+</body>
+
+</html>
