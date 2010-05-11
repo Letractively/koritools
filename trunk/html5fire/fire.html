@@ -1,8 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+<style type="text/css"> 
+html,body,table,td{background-color: black; padding:0;margin:10px;}
+html,body,table{width:100%;height:100%}
+div{background:#FFF;position:relative; margin:0 auto;border:#BBB solid 1px}
+label{color: gray;}
+input{color: gray; border-width: 0; background-color: #101010;}
+</style> 
+
 
 <script type="text/javascript"> 
 
@@ -18,6 +26,9 @@ var palette = new Array(COLORS_IN_PALETTE);
 
 var flameArray
 var flameScreen
+
+var DECAY = 3; 
+var frameDelay = 0;
 
 function createPalette()
 {
@@ -161,7 +172,6 @@ function updateFramesCounter()
 
 function burnLoop()
 {
-	const DECAY = 3;
 	const MIN_FIRE = 40;
 	const FIRE_INCREASE = 255;
 	const ROOT_RAND = 40;
@@ -255,8 +265,7 @@ function burnLoop()
 function killWithFire()
 {
 	initFire();
-	//while(true)
-	setInterval("burnLoop();",0);
+	setInterval("burnLoop();",frameDelay);
 }
 
 
@@ -270,32 +279,40 @@ function testJS()
 	return
 }
 
-</script>
-
-<style type="text/css"> 
-html,body,table,td{padding:0;margin:0; background-color: black;}
-html,body,table{width:100%;height:100%}
-div{background:#FFF;position:relative; margin:0 auto;border:#BBB solid 1px}
-</style> 
+function refreshFire()
+{
+	var myDiv = document.getElementById("fireDiv");
+	myDiv.style.width = document.getElementById("sizeXID").value;
+	myDiv.style.height = document.getElementById("sizeYID").value;
+	var myCanvas = document.getElementById("fireCanvas");
+	myCanvas.width = document.getElementById("sizeXID").value;
+	myCanvas.height = document.getElementById("sizeYID").value;
+	DECAY = document.getElementById("decayID").value;
+	killWithFire();
+}
+</script> 
 
 </head>
 
-<body onload="killWithFire();">
-<table cellspacing=0>
+<body onload="refreshFire();">
 
+<label for="size">Decay:<input type="text" id="decayID" value="3"/></label> 
+<label for="sizeX">Size X:<input type="text" id="sizeXID" value="300"/></label>
+<label for="sizeY">Size Y:<input type="text" id="sizeYID" value="300" /> 
+<input type="button" onclick="refreshFire();" value="Fire!" />
+
+<table align="center">
 <tr>
-
 <td> 
  
-	<div style="width:300px; height:300px;" > 
+	<div id="fireDiv"> 
  
 	<canvas id = "fireCanvas" width="300" height="300">
-	You borwser is too retarded and doesn't support html5.
+
 	</canvas>
 	</div> 
  
 </td>
-
 </tr>
 </table> 
 
