@@ -3,16 +3,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 
+<title>Kori's HTML5 Fire</title>
+
+<meta name="description" content="Burning effect implemented with HTML5 and JavaScript"> 
+<meta name="keywords" content="burning effect, fire, HTML5, canvas, JavaScript">
+
 <style type="text/css"> 
 html,body,table,td{background-color: black; padding:0;margin:10px;}
-html,body,table{width:100%;height:100%}
-div{background:#FFF;position:relative; margin:0 auto;border:#BBB solid 1px}
+table{width:100%;height:100%}
+canvas{background:#FFF;position:relative; margin:0 auto;border:#BBB solid 1px}
 label{color: gray;}
 input{color: gray; border-width: 0; background-color: #101010;}
+a {color: gray;}
 </style> 
 
 
 <script type="text/javascript"> 
+/*
+	This code is based on HTK's Burning Effect (htk@carrier.com.br)
+	HTML5 version is created by KoriBRand@gmail.com
+*/
 
 var ctx
 var fireImage
@@ -282,8 +292,8 @@ function testJS()
 function refreshFire()
 {
 	var myDiv = document.getElementById("fireDiv");
-	myDiv.style.width = document.getElementById("sizeXID").value;
-	myDiv.style.height = document.getElementById("sizeYID").value;
+	//myDiv.style.width = document.getElementById("sizeXID").value;
+	//myDiv.style.height = document.getElementById("sizeYID").value;
 	var myCanvas = document.getElementById("fireCanvas");
 	myCanvas.width = document.getElementById("sizeXID").value;
 	myCanvas.height = document.getElementById("sizeYID").value;
@@ -305,16 +315,16 @@ function refreshFire()
 <tr>
 <td> 
  
-	<div id="fireDiv"> 
  
 	<canvas id = "fireCanvas" width="300" height="300">
 
 	</canvas>
-	</div> 
  
 </td>
 </tr>
 </table> 
+<a href="http://www.google.com/profiles/KoriBRand">(c) KoriBRand@gmail.com</a>
+
 
 </body>
 
